@@ -1,0 +1,12 @@
+ffmpeg
+youtube-dl
+PyNaCl
+aiohttp
+colorama
+cryptography
+discord.py
+discord-py-interactions
+pyrandmeme
+toml
+requests
+psutil
