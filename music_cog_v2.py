@@ -3,7 +3,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 import interactions
-from youtube_dl import YoutubeDL
+from yt_dlp import YoutubeDL
 import json
 import time
 loop = False
