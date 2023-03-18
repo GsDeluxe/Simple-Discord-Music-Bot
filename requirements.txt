@@ -1,5 +1,6 @@
 ffmpeg
 youtube-dl
+yt-dlp
 PyNaCl
 aiohttp
 colorama
