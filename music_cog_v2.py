@@ -20,19 +20,38 @@ class music_cog(commands.Cog):
 
         # 2d array containing [song, channel]
         self.music_queue = []
-        self.YDL_OPTIONS = {'format': 'bestaudio', 'noplaylist':'True'}
-        self.FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
+        self.ydl_opts = {
+            'format': 'bestaudio/best',
+            'quiet': True,
+            'postprocessors': [{
+                'key': 'FFmpegExtractAudio',
+                'preferredcodec': 'm4a',
+                'preferredquality': '192',
+            }],
+        }
+        # 
+        self.FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5','options': '-vn -filter:a "volume=0.25"'}
         self.vc = None
 
      #searching the item on youtube
     def search_yt(self, item):
-        with YoutubeDL(self.YDL_OPTIONS) as ydl:
+        with YoutubeDL(self.ydl_opts) as ydl:
             try: 
-                info = ydl.extract_info("ytsearch:%s" % item, download=False)['entries'][0]
-            except Exception: 
+                # info = ydl.extract_info("ytsearch:%s" % item, download=False)['entries'][0]
+                info = ydl.extract_info(f"ytsearch: {item}", download=False)['entries'][0]
+            except Exception as e:
+                print(f"Error: {e}") 
                 return False
+        print(info)
+        print("\n")
+        info = ydl.sanitize_info(info)
 
-        return {'source': info['formats'][0]['url'], 'title': info['title']}
+        
+                
+        #
+
+        print({'source': info['url'], 'title': info['title']})
+        return {'source': info['url'], 'title': info['title']}
 
     def play_next(self):
         if len(self.music_queue) > 0:
@@ -40,6 +59,7 @@ class music_cog(commands.Cog):
 
             #get the first url
             m_url = self.music_queue[0][0]['source']
+            song = self.music_queue[0][0]["title"]
 
             #remove the first element as you are currently playing it
             if loop == False:
@@ -47,8 +67,9 @@ class music_cog(commands.Cog):
             else:
                 time.sleep(1)
                 pass
-            self.vc.play(discord.FFmpegPCMAudio(m_url, **self.FFMPEG_OPTIONS), after=lambda e: self.play_next())
+            self.vc.play(discord.FFmpegPCMAudio(source=m_url, **self.FFMPEG_OPTIONS), after=lambda e: self.play_next())
         else:
+
             self.is_playing = False
 
 
@@ -118,7 +139,7 @@ class music_cog(commands.Cog):
     @app_commands.command(name="play", description="Plays a selected song from youtube")
     async def play(self, ctx:discord.Interaction, song: str):
         global loop
-
+        await ctx.response.defer()
         song_name = song
 
         query = "".join(song_name)
@@ -151,9 +172,9 @@ class music_cog(commands.Cog):
             embed_error = discord.Embed(title="Error :warning:", description="`Problem:`\n`Incorrect Format try another keyword. This error could be due to a playlist or livestream format`", color=discord.Color.red())
             song_embed = discord.Embed(title="Song Added :musical_note:", description="Song added to the queue \n " + "`" + song["title"] + "`", color=discord.Color.dark_blue())
             if type(song) == type(True):
-                await ctx.response.send_message(embed=embed_error)
+                await ctx.followup.send(embed=embed_error)
             else:
-                await ctx.response.send_message(embed=song_embed)
+                await ctx.followup.send(embed=song_embed)
                 self.music_queue.append([song, voice_channel])
 
                 with open("plays.txt", "w") as f:
