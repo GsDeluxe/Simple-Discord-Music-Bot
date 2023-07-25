@@ -44,7 +44,7 @@ Other Commands
 
 ## Notice
 
-You or Your Bot May Get Banned For Using This Code As It Can Violate Discords T&S So Use This A Your Own Risk
+You or Your Bot May Get Banned For Using This Code As It Can Violate Discords TOS So Use This A Your Own Risk
 
 ## Usefull Infomation
 
