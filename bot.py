@@ -134,13 +134,13 @@ def check_nows_size():
             bytes = os.path.getsize("now.txt")
             if int(bytes) > 100000000:
                 os.remove("now.txt")
-                with open("now.txt", "w") as f:
+                with open("now.txt", "w", encoding="utf-8") as f:
                     f.close()
             else:
                 print(f"Current 'now.txt' Byte Size: {str(bytes)}")
             time.sleep(1800)
         else:
-            with open("now.txt", "w") as f:
+            with open("now.txt", "w", encoding="utf-8") as f:
                 f.close()
 
 def check_plays_size():
@@ -149,13 +149,13 @@ def check_plays_size():
             bytes = os.path.getsize("plays.txt")
             if int(bytes) > 100000000:
                 os.remove("plays.txt")
-                with open("plays.txt", "w") as f:
+                with open("plays.txt", "w", encoding="utf-8") as f:
                     f.close()
             else:
                 print(f"Current 'plays.txt' Byte Size: {str(bytes)}")
             time.sleep(1800)
         else:
-            with open("plays.txt", "w") as f:
+            with open("plays.txt", "w", encoding="utf-8") as f:
                 f.close()
 
 threading.Thread(target=check_plays_size, daemon=True).start()
